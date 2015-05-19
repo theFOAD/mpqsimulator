@@ -67,6 +67,7 @@ sub updatemetadata
 	      {
 		$board->{ "match" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "destroy" }{ $c }[ $i ][ $j ] = 0;
+		$board->{ "critical_match" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "create_critical" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "potential_move" }{ $c }[ $i ][ $j ] = 0;
 	      }
@@ -679,7 +680,7 @@ sub findmatches
     #-the tiles that will get destroyed in a match with a critical
     #  (because they get a critical multiplier applied)
     #  (the criticals also need to know which colors they "are", because the
-    #  multiplier depends on the color owner)
+    #  multiplier depends on the color owner) -> this is done
     #-the tiles that will be destroyed because they are matched by the primary
     # moved tile
     #  (because they get multiplier 1, the rest get .75)
@@ -694,6 +695,103 @@ sub findmatches
     # secondary moved tile, in cases the primary doesn't actually generate a
     # match
     #
+
+
+    #locate criticals by color, find neighbours that will be matched away by it, and
+    #mark them and the critical up for a critical multiplier
+    foreach my $c ( @$colors )
+      {
+	foreach my $j ( 0 .. $board->{ "Y" } )
+	  {
+	    foreach my $i ( 0 .. $board->{ "X" } )
+	      {
+		if ( $board->{ "tile" }[ $i ][ $j ]->color( $board->{ "colors" }, $board->{ "extended_colors" } ) eq "critical" and
+		     $board->{ "match" }{ $c }[ $i ][ $j ] > 0 )
+		  {
+		    my $i_min;
+		    my $i_max;
+		    my $j_min;
+		    my $j_max;
+		    
+		    for my $jj ( reverse ( 0 .. $j ) )
+		      {
+			if ( $board->{ "match" }{ $c }[ $i ][ $jj ] > 0 )
+			  {
+			    $j_min = $jj
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+
+		    for my $jj ( $j .. $board->{ "Y" } )
+		      {
+			if ( $board->{ "match" }{ $c }[ $i ][ $jj ] > 0 )
+			  {
+			    $j_max = $jj
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+
+		    if ( $j_max - $j_min >= 2 )
+		      {
+			for my $jj ( $j_min .. $j_max )
+			  {
+			    $board->{ "critical_match" }{ $c }[ $i ][ $jj ]++;
+			  }
+		      }
+
+		    
+		    for my $ii ( reverse ( 0 .. $i ) )
+		      {
+			if ( $board->{ "match" }{ $c }[ $ii ][ $j ] > 0 )
+			  {
+			    $i_min = $ii
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+
+		    for my $ii ( $i .. $board->{ "X" } )
+		      {
+			if ( $board->{ "match" }{ $c }[ $ii ][ $j ] > 0 )
+			  {
+			    $i_max = $ii
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+
+		    if ( $i_max - $i_min >= 2 )
+		      {
+			for my $ii ( $i_min .. $i_max )
+			  {
+			    $board->{ "critical_match" }{ $c }[ $ii ][ $j ]++;
+			  }
+		      }
+
+		    print STDERR "!!!!!!! $c $i_min, $i_max, $j_min, $j_max\n";
+		    die;
+
+		  }
+
+	      }
+	  }
+      }
+
+
+
+    #the board should only return with this information
+    #the actual damage number should be calculated elsewhere, in a "mqp_damage"
+    #sort of sub
     #also note that the board will *also* need to know how many times it has
     #cascaded, because they damage multiplier goes down with each cascade by
     #a factor .75.
