@@ -68,6 +68,8 @@ sub updatemetadata
 		$board->{ "match" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "destroy" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "critical_match" }{ $c }[ $i ][ $j ] = 0;
+		$board->{ "primary_match" }{ $c }[ $i ][ $j ] = 0;
+		$board->{ "secondary_match" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "create_critical" }{ $c }[ $i ][ $j ] = 0;
 		$board->{ "potential_move" }{ $c }[ $i ][ $j ] = 0;
 	      }
@@ -78,6 +80,14 @@ sub updatemetadata
     bless( $board, "Board" );
     $board->statistics;
     return $board;
+  }
+
+
+sub clearmovedata
+  {
+    my $board = shift @_;
+    delete $board->{ "moved_tile" }{ "primary" };
+    delete $board->{ "moved_tile" }{ "secondary" };
   }
 
 
@@ -458,12 +468,13 @@ sub setmove
     $board->{ "tile" }[ $move->[ 0 ][ 0 ]][ $move->[ 0 ][ 1 ] ] = $board->{ "tile" }[ $move->[ 1 ][ 0 ]][ $move->[ 1 ][ 1 ] ];
     $board->{ "tile" }[ $move->[ 1 ][ 0 ]][ $move->[ 1 ][ 1 ] ] = $tmptile;
 
-    $board->{ "moved_tile" }{ "primary" } = \[ $move->[ 1 ][ 0 ], $move->[ 1 ][ 1 ] ];
-    $board->{ "moved_tile" }{ "secondary" } = \[ $move->[ 0 ][ 0 ], $move->[ 0 ][ 1 ] ];
+    $board->{ "moved_tile" }{ "primary" }{ "X" } = $move->[ 1 ][ 0 ];
+    $board->{ "moved_tile" }{ "primary" }{ "Y" } = $move->[ 1 ][ 1 ];
+    $board->{ "moved_tile" }{ "secondary" }{ "X" } = $move->[ 0 ][ 0 ];
+    $board->{ "moved_tile" }{ "secondary" }{ "Y" } = $move->[ 0 ][ 1 ];
 
     $board->updatemetadata;
   }
-
 
 
 sub findmatches
@@ -677,24 +688,10 @@ sub findmatches
 
     #at this point we have marked exactly which tiles will get destroyed
     #now we need to find
-    #-the tiles that will get destroyed in a match with a critical
+    #1)the tiles that will get destroyed in a match with a critical
     #  (because they get a critical multiplier applied)
     #  (the criticals also need to know which colors they "are", because the
     #  multiplier depends on the color owner) -> this is done
-    #-the tiles that will be destroyed because they are matched by the primary
-    # moved tile
-    #  (because they get multiplier 1, the rest get .75)
-    #  (if there IS no primary moved tile, because the board is transformed by
-    #   some other method, or because this a post-cascade unstable board, I
-    #   wil *assume* everything gets multiplier 1)
-    #  (in cases like this one: __X__
-    #                           RR_YY, where critical tile X gets moved down
-    #   I will *also* *assume* both matches get multiplier 1; I might well be
-    #   wrong here...)
-    #-note that where I write primary moved tile, it could also be the
-    # secondary moved tile, in cases the primary doesn't actually generate a
-    # match
-    #
 
 
     #locate criticals by color, find neighbours that will be matched away by it, and
@@ -778,26 +775,144 @@ sub findmatches
 			  }
 		      }
 
-		    print STDERR "!!!!!!! $c $i_min, $i_max, $j_min, $j_max\n";
-		    die;
-
 		  }
 
 	      }
 	  }
       }
 
+    #2)the tiles that will be destroyed because they are matched by the primary
+    # moved tile
+    #  (because they get multiplier 1, the rest get .75)
+    #  (if there IS no primary moved tile, because the board is transformed by
+    #   some other method, or because this a post-cascade unstable board, I
+    #   wil *assume* everything gets multiplier 1)
+    #  (in cases like this one: __X__
+    #                           RR_YY, where critical tile X gets moved down
+    #   I will *also* *assume* both matches get multiplier 1; I might well be
+    #   wrong here...)
+    #-note that where I write primary moved tile, it could also be the
+    # secondary moved tile, in cases the primary doesn't actually generate a
+    # match
+    #
 
+    if ( $board->{ "moved_tile" }{ "primary" } )
+      #then the board is the direct result of a move
+      {
+#	print Dumper $board->{ "moved_tile" }{ "primary" };
+	foreach my $prio ( "primary", "secondary" )
+	  {
+	    my $i = $board->{ "moved_tile" }{ "primary" }{ "X" };
+	    my $j = $board->{ "moved_tile" }{ "primary" }{ "Y" };
 
+	    foreach my $c ( @$colors )
+	      {
+	    
+		if ( $board->{ "match" }{ $c }[ $i ][ $j ] > 0 )
+		  {
+		    my $i_min;
+		    my $i_max;
+		    my $j_min;
+		    my $j_max;
+		    
+		    for my $jj ( reverse ( 0 .. $j ) )
+		      {
+			if ( $board->{ "match" }{ $c }[ $i ][ $jj ] > 0 )
+			  {
+			    $j_min = $jj
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+		    
+		    for my $jj ( $j .. $board->{ "Y" } )
+		      {
+			if ( $board->{ "match" }{ $c }[ $i ][ $jj ] > 0 )
+			  {
+			    $j_max = $jj
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+		    
+		    if ( $j_max - $j_min >= 2 )
+		      {
+			for my $jj ( $j_min .. $j_max )
+			  {
+			    $board->{ $prio . "_match" }{ $c }[ $i ][ $jj ]++;
+			  }
+		      }
+		    
+		    
+		    for my $ii ( reverse ( 0 .. $i ) )
+		      {
+			if ( $board->{ "match" }{ $c }[ $ii ][ $j ] > 0 )
+			  {
+			    $i_min = $ii
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+		    
+		    for my $ii ( $i .. $board->{ "X" } )
+		      {
+			if ( $board->{ "match" }{ $c }[ $ii ][ $j ] > 0 )
+			  {
+			    $i_max = $ii
+			  }
+			else
+			  {
+			    last;
+			  }
+		      }
+		    
+		    if ( $i_max - $i_min >= 2 )
+		      {
+			for my $ii ( $i_min .. $i_max )
+			  {
+			    $board->{ $prio . "_match" }{ $c }[ $ii ][ $j ]++;
+			  }
+		      }
+		  }
+	      }
+	  }
+	
+	
+	$board->clearmovedata;
+      }
+    
     #the board should only return with this information
     #the actual damage number should be calculated elsewhere, in a "mqp_damage"
     #sort of sub
     #also note that the board will *also* need to know how many times it has
-    #cascaded, because they damage multiplier goes down with each cascade by
+    #cascaded, because the damage multiplier goes down with each cascade by
     #a factor .75.
 
     $board->statistics;
     return $board;
+  }
+
+sub calculateboarddamage
+  {
+    my $board = shift @_;
+    my $player1 = shift @_;
+    my $player2 = shift @_;
+    print Dumper $player1;
+
+    foreach my $j ( 0 .. $board->{ "Y" } )
+      {
+	foreach my $i ( 0 .. $board->{ "X" } )
+	  {
+	    
+	  }
+      }
+
   }
 
 
