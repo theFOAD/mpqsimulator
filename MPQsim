@@ -112,7 +112,7 @@ my $current_player = 0;
 while ( 1 )
   {
 
-    $board->display;
+#   $board->display;
     print "Move ", $mv++, ": player $current_player moves.\n";
     $players[ $current_player ]->move( $board );
 

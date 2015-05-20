@@ -83,12 +83,43 @@ sub updatemetadata
   }
 
 
+
+sub calculateboarddamage
+  {
+    my $board = shift @_;
+    my $player1 = shift @_;
+    my $player2 = shift @_;
+    my $colors = $board->{ "colors" };
+#    print Dumper $player1;
+
+    my $damage = 0;
+
+    foreach my $j ( 0 .. $board->{ "Y" } )
+      {
+	foreach my $i ( 0 .. $board->{ "X" } )
+	  {
+	    foreach my $c ( @$colors )
+	      {
+		if ( $board->{ "destroy" }{ $c }[ $i ][ $j ] > 0 )
+		  {
+		    print $c, "\n";
+		    $damage += $player1->{ "damage" }{ $c };
+		  }
+	      }
+	  }
+      }
+    $board->display;
+    print "Damage: $damage\n"; die;
+  }
+
 sub clearmovedata
   {
     my $board = shift @_;
     delete $board->{ "moved_tile" }{ "primary" };
     delete $board->{ "moved_tile" }{ "secondary" };
-  }
+    delete $board->{ "primary_move_causes_match" };
+    delete $board->{ "secondary_move_causes_match" };
+}
 
 
 sub haspotentialmoves
@@ -517,9 +548,17 @@ sub findmatches
 		      }
 		    if ( $match_size >= 4 )
 		      {
-			foreach my $k ( 0  .. $board->{ "X" } )
+##			foreach my $k ( 0  .. $board->{ "X" } )
+##			  {
+##			    print "BUG! WRONG COLORS GET MARKED AS destroy!\n";
+##			    print "SAME GOES FOR VERTICAL AT LEAST!\n";
+##			    $board->{ "destroy" }{ $c }[ $k ][ $j ] = 1;
+##			    $board->{ "destroy" }{ "any" }[ $k ][ $j ] = 1;
+##			  }
+			foreach my $k ( 0 .. $i -1, $h .. $board->{ "X" } )
 			  {
-			    $board->{ "destroy" }{ $c }[ $k ][ $j ] = 1;
+			    my $co = $board->{ "tile" }[ $k ][ $j ]->color( $board->{ "colors" }, $board->{ "extended_colors" } );
+			    $board->{ "destroy" }{ $co }[ $k ][ $j ] = 1;
 			    $board->{ "destroy" }{ "any" }[ $k ][ $j ] = 1;
 			  }
 		      }
@@ -572,9 +611,15 @@ sub findmatches
 		      }
 		    if ( $match_size >= 4 )
 		      {
-			foreach my $k ( 0  .. $board->{ "Y" } )
+#			foreach my $k ( 0  .. $board->{ "Y" } )
+#			  {
+#			    $board->{ "destroy" }{ $c }[ $i ][ $k ] = 1;
+#			    $board->{ "destroy" }{ "any" }[ $i ][ $k ] = 1;
+#			  }
+			foreach my $k ( 0 .. $j -1, $h .. $board->{ "Y" } )
 			  {
-			    $board->{ "destroy" }{ $c }[ $i ][ $k ] = 1;
+			    my $co = $board->{ "tile" }[ $i ][ $k ]->color( $board->{ "colors" }, $board->{ "extended_colors" } );
+			    $board->{ "destroy" }{ $co }[ $i ][ $k ] = 1;
 			    $board->{ "destroy" }{ "any" }[ $i ][ $k ] = 1;
 			  }
 		      }
@@ -841,6 +886,7 @@ sub findmatches
 		    
 		    if ( $j_max - $j_min >= 2 )
 		      {
+			$board->{ $prio . "_move_causes_match" } = 1;
 			for my $jj ( $j_min .. $j_max )
 			  {
 			    $board->{ $prio . "_match" }{ $c }[ $i ][ $jj ]++;
@@ -874,6 +920,7 @@ sub findmatches
 		    
 		    if ( $i_max - $i_min >= 2 )
 		      {
+			$board->{ $prio . "_move_causes_match" } = 1;
 			for my $ii ( $i_min .. $i_max )
 			  {
 			    $board->{ $prio . "_match" }{ $c }[ $ii ][ $j ]++;
@@ -896,23 +943,6 @@ sub findmatches
 
     $board->statistics;
     return $board;
-  }
-
-sub calculateboarddamage
-  {
-    my $board = shift @_;
-    my $player1 = shift @_;
-    my $player2 = shift @_;
-    print Dumper $player1;
-
-    foreach my $j ( 0 .. $board->{ "Y" } )
-      {
-	foreach my $i ( 0 .. $board->{ "X" } )
-	  {
-	    
-	  }
-      }
-
   }
 
 
