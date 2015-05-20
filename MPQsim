@@ -105,6 +105,8 @@ my $colors = $board->{ "colors" };
 $players[ 0 ] = Player->new( "Player-0", $waves_0, "random", $colors );
 $players[ 1 ] = Player->new( "Player-1", $waves_1, "random", $colors );
 
+my @damage; #just temp to try stuff out
+
 my $mv = 0;
 
 #DM
@@ -128,12 +130,17 @@ while ( 1 )
 	$board->gravity;
 	$board->fill;
 	$board->findmatches;
-	$board->calculateboarddamage( $players[ $current_player ], ( $players[ 1 - $current_player ] ) );
+	$damage[ 1 - $current_player ] += $board->calculateboarddamage( $players[ $current_player ], ( $players[ 1 - $current_player ] ) );
       }
     $board->findpotentialmoves;
-    die "Player ", $players[ $current_player ]->{ "name" }, " caused a deadlock.  Guess he loses or something.\n" if not $board->haspotentialmoves;
+    if ( not $board->haspotentialmoves )
+      { 
+	print "Damage 0: ", $damage[ 0 ], "\n";
+	print "Damage 1: ", $damage[ 1 ], "\n";
+	die "Player ", $players[ $current_player ]->{ "name" }, " caused a deadlock.  Guess he loses or something.\n"; }
     $current_player = 1 - $current_player;
   }
+
 
 #trigger_pool?
 

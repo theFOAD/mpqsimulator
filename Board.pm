@@ -109,7 +109,8 @@ sub calculateboarddamage
 	  }
       }
     $board->display;
-    print "Damage: $damage\n"; die;
+    print "Damage: $damage\n";
+    return $damage;
   }
 
 sub clearmovedata
