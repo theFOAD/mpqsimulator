@@ -1,0 +1,24 @@
+1>player swaps two tiles (t1 and t2); the result must always be a match
+2.1>only t1 is part of a match
+2.1.1>there are matches
+     >mark the entire match t1 is a part of
+     2.1.1.1>determine the entire set of tiles to be destroyed by the marked
+             matches
+            >determine criticals to be created by the marked matches
+            >determine if the marked matches gives the player an extra turn
+             [match 5].
+            >calculate the match damage including modifiers based on the
+             agent owning each marked match
+            >destroy the determined tiles
+            >apply calculated match damage to the relevant enemy agent
+            >apply gravity
+            >determine all matches on board
+     2.1.1.2>there are matches
+            >mark all matches
+            >go to 2.1.1.1
+     2.1.1.3>there are no matches
+2.1.2>there are no matches
+      >go to 1
+2.2>only t2 is part of a match
+   >remap t1 and t2, go to 2.1
+2.3>t1 and t2 are both part of a match
