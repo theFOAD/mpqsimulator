@@ -1,26 +1,52 @@
+*match
+set up colors, board size
+set up [stable] board
+set up 2 players [waves, agents, ai] [generalize from MPQ; specify if player can move enemy agents; if their agents move to the front during a turn when they take the relevant action; generalize to more players?]
+player 1 takes turn [generalize?]
+1. player down?
+ no: other player takes turn, go to 1.
+ yes: end loop
+downed player loses
+match ends
+
+**stuff about passives needs to be included above and below
+**Do passives that trigger at the start of a turn also trigger when a player gets a match-5 and goes again? no
+**When do attack tiles trigger? end of turn, not after a match-5
+
+**turns
+During a turn, 4 actions can be taken, they may or may not end the turn by default; this can be overridden by certain circumstances; if the turn doesn't end and more than 1 player is still alive, the player gets to take another action
+1. swap 2 tiles [ends turn by default]
+2. execute a power [doesn't end turn by default]
+3. use a TU [doesn't end turn by default]
+4. swap enemy agent order [doesn't end turn; can't be done by player 2]
+
+*swap 2 tiles
 1>player who owns turn swaps two tiles (t1 and t2) [the result must always
   be a match]
- >other player gets the next turn
+ >this action ends the turn
   2.1>t1 is part of a match [t2 might be part of one as well] [A]
      >mark the matching agent as instigator [B]
     2.1.1>mark the entire match t1 is a part of
       2.1.1.1>do the marked matches contain a match-5?
-             >yes: current player get the next turn [no: turn ownership
-              doesn't change: nul op]
+             >yes: this action _doesn't_ end the turn [no: turn still ends:
+              nul op]
              >determine the entire set of tiles to be destroyed by the
               marked matches
              >determine criticals to be created by the marked matches [C]
              >calculate the match damage including modifiers based on the
-              agent owning each marked match
+              agent owning each marked match [D]
+             >calculate AP gained by the move
              >destroy the determined tiles
              >apply calculated match damage to the relevant enemy agent
+             >add AP to the player's resources [not exceeding 30/color]
              >apply gravity
              >determine all matches on board
         2.1.1.1.1>there are matches
                >mark all matches
                >go to 2.1.1.1
         2.1.1.1.2>there are no matches
-               >is the player player 1?
+               >is the player player 1? [generalize this to a variable,
+                set up when the player is created]
                >yes: put the instigator in front [no: agents stay where they
                 are: nul op]
                >go to 1
@@ -51,3 +77,10 @@ Every match generates only 1 critical. As far as I can tell, the critical's loca
           closest to the center; pick the left one if it's a draw
   2.1>no: [it's just a vertical 5+ match]: put the critical on the tile
           closest to the center; pick the higher one if it's a draw
+
+D
+calculate the match damage including modifiers based on the
+agent owning each marked match
+
+Note that the damage may also depend on the enemy agent and any abilities
+they have out; consider Colossus and Vision and their CD tiles.
