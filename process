@@ -9,7 +9,7 @@
               doesn't change: nul op]
              >determine the entire set of tiles to be destroyed by the
               marked matches
-             >determine criticals to be created by the marked matches
+             >determine criticals to be created by the marked matches [C]
              >calculate the match damage including modifiers based on the
               agent owning each marked match
              >destroy the determined tiles
@@ -30,9 +30,24 @@
 A
 t1 is part of a match
 
-This is clear in most cases. When t1 is a critical and only one color is matched, that color is the only match color. However, when t1 is a critical and more than one color is matched, I do not know what MPQ does. My _assumption_ is that all matched colors count as part of the first match, and that they resolve at the same time. Two differently-colored match-3s do not add up to a match-5 however (for example).
+This is clear in most cases. When t1 is a critical and only one color is matched, that color is the only match color. However, when t1 is a critical and more than one color is matched, I do not know what MPQ does. My _assumption_ is that all matched colors count as part of the first match, and that they resolve at the same time [confirmed!]. Two differently-colored match-3s do not add up to a match-5 however (for example).
 
 B
 mark the matching agent as instigator
 
 This is clear in most cases. When t1 is a critical and only one color is matched, that color determines the matching agent. However, when t1 is a critical and more than one color is matched, I do not know what MPQ does. My _assumption_ is that the highest matching color determines the instigator. If more than one color has the highest value, I will assume the tankiest agent is the instigator.
+
+C
+determine criticals to be created by the marked matches
+
+Every match generates only 1 critical. As far as I can tell, the critical's location is determined as follows
+1>is there a horizontal sub-match?
+  1.1>yes: find the lowest line containing 1 or more of such matches [there
+      could be 2 of them...]
+     >is there a crossing?
+    1.1.1>yes: put the critical on the crossing closest to the center; pick
+          the left one if it's a draw
+    1.1.2>no [it's just a horizontal 5+-match]: put the critical on the tile
+          closest to the center; pick the left one if it's a draw
+  2.1>no: [it's just a vertical 5+ match]: put the critical on the tile
+          closest to the center; pick the higher one if it's a draw
