@@ -10,6 +10,7 @@ downed player loses
 match ends
 
 **stuff about passives needs to be included above and below
+**also stuff about checking for downed/..? characters
 **Do passives that trigger at the start of a turn also trigger when a player gets a match-5 and goes again? no
 **When do attack tiles trigger? end of turn, not after a match-5
 
@@ -18,9 +19,13 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
 1. swap 2 tiles [ends turn by default]
 2. execute a power [doesn't end turn by default]
 3. use a TU [doesn't end turn by default]
-4. swap enemy agent order [doesn't end turn; can't be done by player 2]
+4. cycle enemy agent order [doesn't end turn; can't be done by player 2]
 
-*swap 2 tiles
+*ACTION: 2. execute a power
+*ACTION: 3. use a TU
+*ACTION: 4. cycle enemy agent order
+
+*ACTION: swap 2 tiles
 1>player who owns turn swaps two tiles (t1 and t2) [the result must always
   be a match]
  >this action ends the turn
@@ -30,6 +35,10 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
       2.1.1.1>do the marked matches contain a match-5?
              >yes: this action _doesn't_ end the turn [no: turn still ends:
               nul op]
+      2.1.1.2>do the marked matches trigger a passive? possible conditions
+              include: matches are a particular color; there are 4-matches;
+              there are 5-matches; special tiles are matched
+             >yes: execute passive powers [no: nul op]
              >determine the entire set of tiles to be destroyed by the
               marked matches
              >determine criticals to be created by the marked matches [C]
@@ -38,13 +47,20 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
              >calculate AP gained by the move
              >destroy the determined tiles
              >apply calculated match damage to the relevant enemy agent
+      2.1.1.3>does the applied damage down an enemy agent?
+        2.1.1.3.1>yes: mark enemy agent downed [no: nul op]
+                 >determine next agent or end game [requires lots more detail]
+                 >does downing the enemy agent trigger a passive?
+                 >yes: execute passive powers [no: nul op]
+      2.1.1.4>does the applied damage trigger a passive?
+             >yes: execute passive powers [no: nul op]
              >add AP to the player's resources [not exceeding 30/color]
              >apply gravity
              >determine all matches on board
-        2.1.1.1.1>there are matches
+        2.1.1.4.1>there are matches
                >mark all matches
-               >go to 2.1.1.1
-        2.1.1.1.2>there are no matches
+               >go to 2.1.1.2
+        2.1.1.4.2>there are no matches
                >is the player player 1? [generalize this to a variable,
                 set up when the player is created]
                >yes: put the instigator in front [no: agents stay where they

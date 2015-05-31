@@ -44,12 +44,13 @@ use Agent;
 #enemy match-4 or better
 #own match-5 or better
 #enemy match-5 or better
-#anyone match-3 green
+#anyone match-3 green/purple
 #own match enemy tiles
 #own any active power use from another agent
 #take damage
 #enough red tiles present at start of turn
 #enough or too few blue tiles present at start of turn
+#kill enemy agent
 
 #player actions
 #move tiles
