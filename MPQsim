@@ -3,10 +3,16 @@
 use strict;
 use warnings;
 use Data::Dumper;
+use Term::ANSIColor;
 
 use Board;
 use Player;
 use Agent;
+
+print color "bold blue";
+print "TEST!\n";
+print colored( "Hallo.", "italic rgb535"), "\n";
+die;
 
 #Dungeon Master (DM)
 #

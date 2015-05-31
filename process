@@ -34,11 +34,11 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
     2.1.1>mark the entire match t1 is a part of
       2.1.1.1>do the marked matches contain a match-5?
              >yes: this action _doesn't_ end the turn [no: turn still ends:
-              nul op]
+              null op]
       2.1.1.2>do the marked matches trigger a passive? possible conditions
               include: matches are a particular color; there are 4-matches;
               there are 5-matches; special tiles are matched
-             >yes: execute passive powers [no: nul op]
+             >yes: execute passive powers [no: null op]
              >determine the entire set of tiles to be destroyed by the
               marked matches
              >determine criticals to be created by the marked matches [C]
@@ -48,12 +48,12 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
              >destroy the determined tiles
              >apply calculated match damage to the relevant enemy agent
       2.1.1.3>does the applied damage down an enemy agent?
-        2.1.1.3.1>yes: mark enemy agent downed [no: nul op]
+        2.1.1.3.1>yes: mark enemy agent downed [no: null op]
                  >determine next agent or end game [requires lots more detail]
                  >does downing the enemy agent trigger a passive?
-                 >yes: execute passive powers [no: nul op]
+                 >yes: execute passive powers [no: null op]
       2.1.1.4>does the applied damage trigger a passive?
-             >yes: execute passive powers [no: nul op]
+             >yes: execute passive powers [no: null op]
              >add AP to the player's resources [not exceeding 30/color]
              >apply gravity
              >determine all matches on board
@@ -64,7 +64,7 @@ During a turn, 4 actions can be taken, they may or may not end the turn by defau
                >is the player player 1? [generalize this to a variable,
                 set up when the player is created]
                >yes: put the instigator in front [no: agents stay where they
-                are: nul op]
+                are: null op]
                >go to 1
   2.2>only t2 is part of a match
      >remap t1 and t2, go to 2.1
@@ -100,3 +100,21 @@ agent owning each marked match
 
 Note that the damage may also depend on the enemy agent and any abilities
 they have out; consider Colossus and Vision and their CD tiles.
+
+
+tiles
+color
+AP value
+owner -> allegiance
+
+strike -> value
+attack -> value
+protect -> value
+bomb -> value
+CD -> tick
+invisibility
+charge
+
+force bubble
+lock [Bagman]
+lock [Quicksilver]

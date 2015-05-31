@@ -3,6 +3,7 @@ package Board;
 use strict;
 use warnings;
 use Data::Dumper;
+use Term::ANSIColor;
 
 use List::Util qw( shuffle );
 
@@ -305,6 +306,8 @@ sub gravity
 ####    return $board;
 ####  }
 
+#It is not correct to remove all destroyables in a single go
+#MPQ first removes the primary match and deals damage
 sub cleardestroyables
   {
     my $board = shift @_;
@@ -508,7 +511,7 @@ sub setmove
     $board->updatemetadata;
   }
 
-
+#It has finally dawned that this is doing criticals completely incorrectly.
 sub findmatches
   {
     my $board = shift @_;
