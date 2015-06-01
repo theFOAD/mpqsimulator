@@ -1,27 +1,36 @@
-1st row: color; charged status+AP value [tile color assumed]
-2nd row: strike+value/attack+value/protect+value/bomb+value/countdown+tick/charged/invisible
-3rd row: allegiance[0=neutral;1=P1;2=P2]+[l]ock
-4th row: owner
+row 1: color:AP + lock owner [if locked]
+row 2: damage owner P1:damage
+row 3: damage owner P2:damage
+row 4: special owner+special+value/tick  [special owner implies allegiance]
+       [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown/char[g]ed/[i]nvisible/
+       [t]rap/[w]eb
 
+       trap?! you can lock traptiles
+       web!?! only targets basic tiles
+
+player 1                                                         player 2
+1 Wolverine                b                 f                    Daken 4
+2 Hood                     m                 b                 Ragnarok 5
+3 Deadpool                 f                 m          Invisible Woman 6
 +--------+--------+--------+--------+--------+--------+--------+--------+
-|red    1|pur    1|        |        |        |        |        |        |
-|st   345|in      |        |        |        |        |        |        |
-|1       |2       |        |        |        |        |        |        |
-|Dak[Cla]|Inv[Cla]|        |        |        |        |        |        |
+|red:1 l6|blu:3   |tup:1   |        |        |        |        |        |
+|1:81    |2:705   |1:41    |        |        |        |        |        |
+|5:43    |5:82    |6:42    |        |        |        |        |        |
+|1:s120  |5:g     |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
-|blu    3|grn    1|yel    1|        |        |        |        |        |
-|ch      |cd     4|        |        |        |        |        |        |
-|2       |1       |0       |        |        |        |        |        |
-|Tho[God]|Fal[Mig]|        |        |        |        |        |        |
+|blu     |grn     |yel     |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
-|yel    1|blk     |        |        |        |        |        |        |
-|bo 12000|cd     1|        |        |        |        |        |        |
-|2       |1l      |        |        |        |        |        |        |
-|Ult[xxx]|Inv[Cla]|        |        |        |        |        |        |
+|yel     |blk     |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
 |crt     |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
-|0       |        |        |        |        |        |        |        |
+|        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
 |        |        |        |        |        |        |        |        |

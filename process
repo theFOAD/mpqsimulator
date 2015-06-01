@@ -101,12 +101,15 @@ agent owning each marked match
 Note that the damage may also depend on the enemy agent and any abilities
 they have out; consider Colossus and Vision and their CD tiles.
 
+------------------------
 
 tiles
 color
 AP value
-owner -> allegiance
+damage owner [1 per player]
+damage [1 per player]
 
+special:
 strike -> value
 attack -> value
 protect -> value
@@ -114,7 +117,10 @@ bomb -> value
 CD -> tick
 invisibility
 charge
+"special" owner -> allegiance
 
+lock:
 force bubble
 lock [Bagman]
 lock [Quicksilver]
+lock owner
