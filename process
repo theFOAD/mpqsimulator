@@ -14,6 +14,9 @@ match ends
 **Do passives that trigger at the start of a turn also trigger when a player gets a match-5 and goes again? no
 **When do attack tiles trigger? end of turn, not after a match-5
 
+***   ooo
+      ooo -> this match will result in a crit bottom left
+
 **turns
 During a turn, 4 actions can be taken, they may or may not end the turn by default; this can be overridden by certain circumstances; if the turn doesn't end and more than 1 player is still alive, the player gets to take another action
 1. swap 2 tiles [ends turn by default]
