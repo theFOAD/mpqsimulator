@@ -5,16 +5,13 @@ row 4: special owner+special+value/tick  [special owner implies allegiance]
        [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown/char[g]ed/[i]nvisible/
        [t]rap/[w]eb
 
-       trap?! you can lock traptiles
-       web!?! only targets basic tiles
-
 player 1                                                         player 2
 1 Wolverine                b                 f                    Daken 4
 2 Hood                     m                 b                 Ragnarok 5
 3 Deadpool                 f                 m          Invisible Woman 6
 +--------+--------+--------+--------+--------+--------+--------+--------+
 |red:1 l6|blu:3   |tup:1   |        |        |        |        |        |
-|1:81    |2:705   |1:41    |        |        |        |        |        |
+|1:81    |2:75    |1:41    |        |        |        |        |        |
 |5:43    |5:82    |6:42    |        |        |        |        |        |
 |1:s120  |5:g     |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
