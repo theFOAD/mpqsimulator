@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Data::Dumper;
+use Term::ANSIColor;
+
+use Palette;
+
+my $palette_1 = Palette->new;
+
+print Dumper $palette_1;
+
+my $palette_2 = Palette->new( 4 );
+
+print Dumper $palette_2;
+
+my $palette_3 = Palette->new( 10 );
+
+print Dumper $palette_3;
+
+print "print default colors.\n";
+print Dumper $palette_1->colors;
+
+print "print all colors.\n";
+print Dumper $palette_1->colors( "all" );
+
+print "print special colors.\n";
+print Dumper $palette_1->colors( "special" );
+
+print "default shortname-3 red.\n";
+print $palette_1->shortname( "red", 3 ), "\n";
+
+print "default shortname [1] blue.\n";
+print $palette_1->shortname( "blue" ), "\n";
+
+print "does color010 exist?\n";
+print $palette_1->exists( "color010" ), "\n";
+print $palette_3->exists( "color010" ), "\n";

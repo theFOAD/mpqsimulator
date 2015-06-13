@@ -6,13 +6,15 @@ use Data::Dumper;
 
 sub new
   {
+    shift @_;
+
     my @colors;
     my @specials;
     my @empty;
     my @default_colors = ( "yellow", "red", "blue", "purple", "green", "black", "teamup" );
     my @default_specials = ( "critical" );
     my @default_empty = ( "empty" );
-    my %col_1 = { "yellow" => "y",
+    my %col_1 = ( "yellow" => "y",
 		  "red" => "r",
 		  "blue" => "b",
 		  "purple" => "p",
@@ -20,8 +22,8 @@ sub new
 		  "black" => "k",
 		  "teamup" => "t",
                   "critical" => "c",
-                  "empty" => "_" };
-    my %col_2 = { "yellow" => "ye",
+                  "empty" => "_" );
+    my %col_2 = ( "yellow" => "ye",
 		  "red" => "rd",
 		  "blue" => "bu",
 		  "purple" => "pu",
@@ -29,24 +31,25 @@ sub new
 		  "black" => "bk",
 		  "teamup" => "tu",
                   "critical" => "cr",
-                  "empty" => "__" };
-    my %col_3 = { "yellow" => "yel",
+                  "empty" => "__" );
+    my %col_3 = ( "yellow" => "yel",
 		  "red" => "red",
 		  "blue" => "blu",
 		  "purple" => "pur",
 		  "green" => "grn",
 		  "black" => "blk",
-		  "teamup" => "tup"
+		  "teamup" => "tup",
                   "critical" => "crt",
-                  "empty" => "___" }
+                  "empty" => "___" );
+    my $palette_size;
 
     if ( @_ )
       {
-	my $palette_size = shift @_;
+	$palette_size = shift @_;
       }
     else
       {
-	$palette_size = 7
+	$palette_size = 7;
       }
 
     foreach my $i ( 1 .. $palette_size )
@@ -67,7 +70,7 @@ sub new
 
     @specials = @default_specials;
 
-    @empty = @empty;
+    @empty = @default_empty;
 
     my %palette;
     $palette{ "colors" }{ "basic" } = \@colors;
@@ -77,39 +80,60 @@ sub new
     foreach my $c ( @colors, @specials, @empty )
       {
 	$palette{ "abbr" }{ 1 }{ $c } = $col_1{ $c };
-	$palette{ "abbr" }{ 2 }{ $c } = $col_1{ $c };
-	$palette{ "abbr" }{ 3 }{ $c } = $col_1{ $c };
+	$palette{ "abbr" }{ 2 }{ $c } = $col_2{ $c };
+	$palette{ "abbr" }{ 3 }{ $c } = $col_3{ $c };
       }
 
-    bless ( %palette, "Palette" );
-    return \%palette;
+    my $palette = \%palette;
+    bless ( $palette, "Palette" );
+    return $palette;
   }
 
 sub colors
   {
     my $palette = shift @_;
-    my @grp = [ "basic" ];
+    my @grp = ( "basic" );
     my %colors;
     my @colors;
     if ( @_ )
       {
-	my @grp = @_;
+	print "X", @_, "\n";
+	@grp = @_;
       }
+    my @grp2;
+
     foreach my $g ( @grp )
       {
-	$g = "basic" if $g eq "colors";
-	$g = "basic" if $g eq "default";
-	$g = "special" if $g eq "specials";
-	if ( $g eq "all" ) #note "all" doesn't include "empty"
+	if ( $g eq "colors" )
 	  {
-	    $g = "basic";
-	    unshift "special", @grp;
+	    push @grp2, "basic";
 	  }
+	elsif ( $g eq "default" )
+	  {
+	    push @grp2, "basic";
+	  }
+	elsif ( $g eq "specials" )
+	  {
+	    push @grp2, "special";
+	  }
+	elsif ( $g eq "all" )
+	  {
+	    push @grp2, "basic";
+	    push @grp2, "special";
+	  }
+       else
+	 {
+	   push @grp2, $g;
+	 }
+      }
+
+    foreach my $g ( @grp2 )
+      {
 	if ( defined $palette->{ "colors" }{ $g } )
 	  {
 	    foreach my $c ( @{ $palette->{ "colors" }{ $g } } )
 	      {
-		%colors{ $c } = 1;
+		$colors{ $c } = 1;
 	      }
 	  }
 	else
@@ -123,14 +147,15 @@ sub colors
       }
     return \@colors;
   }
-
+  
 sub shortname
   {
     my $palette = shift @_;
     my $c = shift @_;
+    my $size;
     if ( @_)
       {
-	my $size = shift @_
+	$size = shift @_
       }
     else
       {
@@ -138,6 +163,7 @@ sub shortname
       }
     if ( defined $palette->{ "abbr" }{ $size }{ $c } )
       {
+#	print "Hoi $size $c \n";
 	return $palette->{ "abbr" }{ $size }{ $c }
       }
     else
@@ -147,3 +173,17 @@ sub shortname
   }
 
 1;
+
+sub exists
+  {
+    my $palette = shift @_;
+    my $c = shift @_;
+    foreach my $class ( "basic", "special", "empty" )
+      {
+	foreach my $color ( @{ $palette->{ "colors" }{ $class } } )
+	  {
+	    return 1 if $c eq $color;
+	  }
+      }
+    return 0;
+  }

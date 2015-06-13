@@ -1,0 +1,294 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Data::Dumper;
+use Term::ANSIColor;
+
+use Board;
+use Player;
+use Agent;
+
+print color "bold blue";
+print "TEST!\n";
+print colored( "Hallo.", "italic rgb535"), "\n";
+die;
+
+#Dungeon Master (DM)
+#
+#Board
+#->Dimensions
+#->Tiles
+#
+#Agent
+#->Regular
+#->Team Up
+#
+#Player
+#->AI
+#->User input
+#
+#
+#Board->Fill
+#  random or pattern
+#Board->Resolve
+#Board->Shuffle
+#Board->Display
+#Board->HasMatches
+#Board->IsStable
+#Board->IsDeadlocked
+#Board->Gravity
+#Board->DropTiles
+#Board->Dimensions
+
+
+
+
+#passives trigger on
+#turn starts
+#own match-4 or better
+#enemy match-4 or better
+#own match-5 or better
+#enemy match-5 or better
+#anyone match-3 green/purple
+#own match enemy tiles
+#own any active power use from another agent
+#take damage
+#enough red tiles present at start of turn
+#enough or too few blue tiles present at start of turn
+#kill enemy agent
+
+#player actions
+#move tiles
+#use power
+#use TU
+#rotate enemy agents
+
+
+
+#board "=" clock
+
+my $ag_wolverine = Agent->new( "Wolverine",
+			       5000,
+			       { "red" => 80,
+				 "yellow" => 70,
+				 "green" => 60,
+				 "blue" => 12,
+				 "purple" => 11,
+				 "black" => 10,
+				 "teamup" => 41,
+				 "critical" => 3.5 },
+			       [ "damage",
+				 "steal_AP",
+				 "destroy_tiles" ],
+			       "active"
+			     );
+
+my $ag_daken = Agent->new( "Daken",
+			       4000,
+			       { "red" => 12,
+				 "yellow" => 11,
+				 "green" => 10,
+				 "blue" => 80,
+				 "purple" => 70,
+				 "black" => 60,
+				 "teamup" => 42,
+				 "critical" => 3.0 },
+			       [ "damage",
+				 "steal_AP",
+				 "destroy_tiles" ],
+			       "active"
+			     );
+
+my $wave_0 = [ $ag_wolverine, $ag_daken ];
+my $wave_1 = [ $ag_wolverine, $ag_daken ];
+
+my $waves_0 = [ $wave_0 ];
+my $waves_1 = [ $wave_0 ];
+
+my $board = Board->playableboard( 8, 8, 7 );
+my @players;
+my $colors = $board->{ "colors" };
+$players[ 0 ] = Player->new( "Player-0", $waves_0, "random", $colors );
+$players[ 1 ] = Player->new( "Player-1", $waves_1, "random", $colors );
+
+my @damage; #just temp to try stuff out
+
+my $mv = 0;
+
+#DM
+my $current_player = 0;
+while ( 1 )
+  {
+
+#   $board->display;
+    print "Move ", $mv++, ": player $current_player moves.\n";
+    $players[ $current_player ]->move( $board );
+
+
+
+    $board->findmatches;
+
+#should be a sub in Board: "resolve"; this will also count the number of cascaded boards
+    while ( $board->hasmatches )
+      {
+	$board->cleardestroyables( $players[ $current_player ] );
+	$players[ $current_player ]->statistics( $board );
+	$board->gravity;
+	$board->fill;
+	$board->findmatches;
+	$damage[ 1 - $current_player ] += $board->calculateboarddamage( $players[ $current_player ], ( $players[ 1 - $current_player ] ) );
+      }
+    $board->findpotentialmoves;
+    if ( not $board->haspotentialmoves )
+      { 
+	print "Damage 0: ", $damage[ 0 ], "\n";
+	print "Damage 1: ", $damage[ 1 ], "\n";
+	die "Player ", $players[ $current_player ]->{ "name" }, " caused a deadlock.  Guess he loses or something.\n"; }
+    $current_player = 1 - $current_player;
+  }
+
+
+#trigger_pool?
+
+
+
+####
+####my $mv;
+####my $mvtot;
+####my $nil = 0;
+####my $max = 0;
+####
+####foreach my $i ( 0 .. 999 )
+####  {
+####
+####    my $board;
+####
+####    while ( 1 )
+####      {
+####	$board = Board->new( 8, 8, 7 );
+####	$board->fill;
+####	$board->findmatches;
+####	last unless $board->hasmatches
+####      }
+####
+####    $board->findpotentialmoves;
+####    
+####    while ( $board->haspotentialmoves )
+####      {
+#####	print "Potential moves:\n";
+#####	$board->displaypotentialmoves;
+#####	print "\n\n";
+####	my $move = $board->getmove( "random" );
+#####	print Dumper $move;
+####	$mv++;
+####	$board->setmove( $move );
+#####	print "\n";
+####	
+####	$board->findmatches;
+####	
+####	while ( $board->hasmatches )
+####	  {
+#####	    $board->displaydestroyables;
+#####	    print "\n";
+####	    $board->cleardestroyables;
+####	    $board->gravity;
+####	    $board->fill;
+####	    $board->findmatches;
+####	  }
+#####	$board->displaymatches;
+#####	print "\n";
+####	
+####	$board->findpotentialmoves;
+####	
+####      }
+####
+####    $mvtot += $mv;
+####    $max = ( $mv > $max? $mv : $max );
+####    $nil++ if $mv == 1;
+####
+####    print $i, " ", $mvtot, " ", $mv, " ", $mvtot / ( $i + 1 ), " ", $max, " ", $nil, "\n";
+####    $mv = 0;
+####    
+####  }
+####
+####die;
+####
+
+
+
+
+
+
+
+
+#
+#my $board = Board->new( 8, 8, 4 );
+#$board->fill;
+##$board->dump;
+#$board->findmatches;
+##$board->dump;
+#$board->displaymatches;
+##$board->dump;
+#
+#$board->display;
+#print "\n";
+#$board->displaystatistics;
+#print "\n";
+#$board->cleardestroyables;
+#$board->displaymatches;
+#print "\n";
+#$board->displaydestroyables;
+#$board->gravity;
+#$board->fill;
+#$board->findmatches;
+#$board->displaymatches;
+#print "\n";
+#$board->displaydestroyables;
+#print "\n";
+#$board->displaystatistics;
+#print "\n";
+#
+#$board->findpotentialmoves;
+##$board->displaypotentialmoves;
+#print "\n";
+#
+#my $move = $board->getmove( "random" );
+#print Dumper $move;
+#
+#
+#die;
+
+
+
+
+
+
+
+##### standard cycle?
+####my $board = Board->new( 7, 7 );
+####$board->fill;
+####$board->findmatches;
+####$board->displaydestroyables;
+####$board->displaystatistics;
+####$board->cleardestroyables;
+####$board->gravity;
+####$board->fill;
+####$board->findmatches;
+####$board->displaydestroyables;
+####$board->displaystatistics;
+
+
+##### test which percentage of boards contains matches
+####my $m;
+####for my $i ( 0 .. 100 )
+####  {
+####    my $testboard = Board->new( 7, 7 );
+####    $testboard->fill;
+####    $testboard->findmatches;
+####    $m++ if $testboard->hasmatches;
+####  }
+####
+####print $m, "\n";
+
+die;

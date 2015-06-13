@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Data::Dumper;
+use Term::ANSIColor;
+
+use Palette;
+use Tile;
+
+my $palette = Palette->new;
+
+
+my $tile_1 = Tile->new( $palette );
+
+print Dumper $tile_1;
+
+$tile_1->set( $palette, "color" => "blue" );
+
+print Dumper $tile_1;
+
+my $tile_2 = Tile->new( $palette, "color" => "red" );
+
+print Dumper $tile_2;
+
+print $tile_1->printf( $palette, 1 ), "\n";
+print $tile_1->printf( $palette, 2 ), "\n";
+print $tile_1->printf( $palette, 3 ), "\n";
+print $tile_2->printf( $palette, 1 ), "\n";
+print $tile_2->printf( $palette, 2 ), "\n";
+print $tile_2->printf( $palette, 3 ), "\n";
