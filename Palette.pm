@@ -97,7 +97,7 @@ sub colors
     my @colors;
     if ( @_ )
       {
-	print "X", @_, "\n";
+#	print "X", @_, "\n";
 	@grp = @_;
       }
     my @grp2;

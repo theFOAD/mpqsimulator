@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use Data::Dumper;
+use Term::ANSIColor;
+
+use Palette;
+use Tile;
+use Board;
+
+my $palette = Palette->new;
+
+my $board_1 = Board->new( $palette, 3, 3 );
+
+print Dumper $board_1;
+
+$board_1->fill;
+
+print Dumper $board_1;
+
+
+my $board_2 = Board->new( $palette, 8, 8 );
+
+$board_2->fill( "color_probabilities" => { "red" => 9, "blue" => 1, "teamup" => 6 } );
+
+print Dumper $board_2;
+
