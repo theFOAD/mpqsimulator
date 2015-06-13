@@ -5,6 +5,8 @@ row 4: special owner+special+value/tick  [special owner implies allegiance]
        [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown/char[g]ed/[i]nvisible/
        [t]rap/[w]eb
 
+Background color = match / potential match?
+
 player 1                                                         player 2
 1 Wolverine                b                 f                    Daken 4
 2 Hood                     m                 b                 Ragnarok 5
