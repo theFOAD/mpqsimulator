@@ -33,6 +33,8 @@ sub set
     
     #possible properties:
     #color
+    #match_color -> is color for everything except criticals, where it is every
+    #other color
     #AP
     #special sigil: [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown
     #char[g]ed/[i]nvisible/[t]rap/[w]eb
@@ -71,7 +73,29 @@ sub set
 	die "Unknown color " . $properties{ "color" } . ".\n";
       }
     
+    delete $tile->{ "match_color" };
+
+    if ( $tile->color eq "critical" )
+      {
+	foreach my $c ( @{ $palette->colors  } )
+	  {
+	    $tile->{ "match_color" }{ $c } = 1;
+	  }
+      }
+    else
+      {
+	$tile->{ "match_color" }{ $tile->color } = 1;
+      }
     return $tile;
+  }
+
+sub match_color #only returns match_colors; setting happens through color or set
+  {
+    my $tile = shift @_;
+    my %mc;
+    %mc = %{ $tile->{ "match_color" } } if defined $tile->{ "match_color" };
+    return \%mc;
+#    return $tile->{ "match_color" };
   }
 
 sub color

@@ -1,9 +1,9 @@
 row 1: color:AP + lock owner [if locked]
 row 2: damage owner P1:damage
 row 3: damage owner P2:damage
-row 4: special owner+special+value/tick  [special owner implies allegiance]
-       [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown/char[g]ed/[i]nvisible/
-       [t]rap/[w]eb
+row 4: special owner+special+value/tick [special owner implies allegiance]
+       [s]trike/[a]ttack/[p]rotect/[b]omb/[c]ountdown+EFFECT/char[g]ed/
+       [i]nvisible/[t]rap/[w]eb
 
 Background color = match / potential match?
 
@@ -22,12 +22,12 @@ player 1                                                         player 2
 |        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
-|yel     |blk     |        |        |        |        |        |        |
+|yel     |crt     |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 +--------+--------+--------+--------+--------+--------+--------+--------+
-|crt     |        |        |        |        |        |        |        |
+|blk     |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |
 |        |        |        |        |        |        |        |        |

@@ -26,3 +26,9 @@ $board_2->fill( "color_probabilities" => { "red" => 9, "blue" => 1, "teamup" => 
 
 print Dumper $board_2;
 
+print $board_2->printf( 1 );
+print $board_2->printf( 2 );
+print $board_2->printf( 3 );
+
+print Dumper $board_2->findmaxhorizontalmatch( 3, 3, "red" );
+print Dumper $board_2->findmaxverticalmatch( 3, 3, "red" );

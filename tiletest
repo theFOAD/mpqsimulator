@@ -41,3 +41,8 @@ my $random_tile_2 = Tile->new( $palette );
 $random_tile_2->color( $palette, "random" );
 print Dumper $random_tile_2;
 
+print Dumper $random_tile_2->match_color;
+
+my $random_tile_3 = Tile->new( $palette, "color" => "critical" );
+print Dumper $random_tile_3->match_color;
+
